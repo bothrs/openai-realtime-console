@@ -151,7 +151,7 @@ export function ConsolePage() {
    * When you click the API key
    */
   const resetAPIKey = useCallback(() => {
-    const apiKey = process.env.OPENAI_KEY || prompt('OpenAI API Key');
+    const apiKey = process.env.REACT_APP_OPENAI_KEY || prompt('OpenAI API Key');
     if (apiKey !== null) {
       localStorage.clear();
       localStorage.setItem('tmp::voice_api_key', apiKey);
