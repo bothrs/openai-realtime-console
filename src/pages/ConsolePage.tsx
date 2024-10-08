@@ -16,7 +16,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { ItemType } from '@openai/realtime-api-beta/dist/lib/client.js';
 import { WavRecorder, WavStreamPlayer } from '../lib/wavtools/index.js';
-import { instructions } from '../utils/conversation_config.js';
+import { instructions as _instructions } from '../utils/conversation_config.js';
 import { WavRenderer } from '../utils/wav_renderer';
 
 import { X, Edit, Zap, ArrowUp, ArrowDown } from 'react-feather';
@@ -90,6 +90,7 @@ export function ConsolePage() {
           }
     )
   );
+  const [instructions, setInstructions] = useState(_instructions);
 
   /**
    * References for
@@ -150,7 +151,7 @@ export function ConsolePage() {
    * When you click the API key
    */
   const resetAPIKey = useCallback(() => {
-    const apiKey = prompt('OpenAI API Key');
+    const apiKey = process.env.OPENAI_KEY || prompt('OpenAI API Key');
     if (apiKey !== null) {
       localStorage.clear();
       localStorage.setItem('tmp::voice_api_key', apiKey);
@@ -498,13 +499,26 @@ export function ConsolePage() {
       // cleanup; resets to defaults
       client.reset();
     };
-  }, []);
+  }, [instructions]);
 
   /**
    * Render the application
    */
   return (
     <div data-component="ConsolePage">
+      {/* prompt field */}
+      <div className="content-prompt">
+        <div className="content-prompt-title">instructions</div>
+        <textarea
+          className="content-prompt-body"
+          style={{ width: '100%', height: '25vh' }}
+          onChange={(e) => {
+            setInstructions(e.target.value);
+          }}
+        >
+          {instructions}
+        </textarea>
+      </div>
       <div className="content-top">
         <div className="content-title">
           <img src="/openai-logomark.svg" />
