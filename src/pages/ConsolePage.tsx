@@ -59,7 +59,8 @@ export function ConsolePage() {
    * Ask user for API Key
    * If we're using the local relay server, we don't need this
    */
-  const apiKey = process.env.REACT_APP_OPENAI_KEY || prompt('OpenAI API Key');
+  const apiKey =
+    localStorage.getItem('tmp::voice_api_key') || prompt('OpenAI API Key');
 
   if (apiKey && apiKey !== '') {
     localStorage.setItem('tmp::voice_api_key', apiKey);
