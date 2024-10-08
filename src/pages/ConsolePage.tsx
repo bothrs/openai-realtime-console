@@ -59,12 +59,9 @@ export function ConsolePage() {
    * Ask user for API Key
    * If we're using the local relay server, we don't need this
    */
-  const apiKey = LOCAL_RELAY_SERVER_URL
-    ? ''
-    : localStorage.getItem('tmp::voice_api_key') ||
-      prompt('OpenAI API Key') ||
-      '';
-  if (apiKey !== '') {
+  const apiKey = process.env.REACT_APP_OPENAI_KEY || prompt('OpenAI API Key');
+
+  if (apiKey && apiKey !== '') {
     localStorage.setItem('tmp::voice_api_key', apiKey);
   }
 
@@ -81,14 +78,10 @@ export function ConsolePage() {
     new WavStreamPlayer({ sampleRate: 24000 })
   );
   const clientRef = useRef<RealtimeClient>(
-    new RealtimeClient(
-      LOCAL_RELAY_SERVER_URL
-        ? { url: LOCAL_RELAY_SERVER_URL }
-        : {
-            apiKey: apiKey,
-            dangerouslyAllowAPIKeyInBrowser: true,
-          }
-    )
+    new RealtimeClient({
+      apiKey: apiKey!,
+      dangerouslyAllowAPIKeyInBrowser: true,
+    })
   );
   const [instructions, setInstructions] = useState(_instructions);
 
@@ -151,7 +144,6 @@ export function ConsolePage() {
    * When you click the API key
    */
   const resetAPIKey = useCallback(() => {
-    const apiKey = process.env.REACT_APP_OPENAI_KEY || prompt('OpenAI API Key');
     if (apiKey !== null) {
       localStorage.clear();
       localStorage.setItem('tmp::voice_api_key', apiKey);
@@ -530,7 +522,7 @@ export function ConsolePage() {
               icon={Edit}
               iconPosition="end"
               buttonStyle="flush"
-              label={`api key: ${apiKey.slice(0, 3)}...`}
+              label={`api key: ${apiKey!.slice(0, 3)}...`}
               onClick={() => resetAPIKey()}
             />
           )}
